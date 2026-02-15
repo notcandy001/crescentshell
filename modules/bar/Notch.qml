@@ -12,9 +12,9 @@ Rectangle {
 
     signal closeRequested()
 
-    // =========================
-    // CLEAN TITLE LOGIC (UNCHANGED)
-    // =========================
+   
+    // CLEAN TITLE LOGIC 
+   
 
     property string cleanTitle: {
         if (!Hyprland.activeToplevel)
@@ -32,9 +32,7 @@ Rectangle {
         return raw
     }
 
-    // =========================
-    // WIDTH LOGIC (UNCHANGED)
-    // =========================
+        // WIDTH LOGIC
 
     width: {
         if (mode !== "idle")
@@ -66,9 +64,8 @@ Rectangle {
 
     focus: true
 
-    // ======================================================
-    // IDLE CONTENT (ALIGNMENT FIXED)
-    // ======================================================
+
+    // IDLE CONTENT (Fixed)
 
     Item {
         anchors.fill: parent
