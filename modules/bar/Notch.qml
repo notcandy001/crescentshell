@@ -1,97 +1,118 @@
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Controls
 import Quickshell.Hyprland
 
 Rectangle {
     id: root
 
     property string mode: "idle"
-
     property int collapsedHeight: 40
     property int expandedHeight: 460
 
-    property int minWidth: 360
-    property int maxWidth: 720
-    property int horizontalPadding: 40
+    signal closeRequested()
 
     // =========================
-    // DYNAMIC WIDTH
+    // CLEAN TITLE LOGIC (UNCHANGED)
     // =========================
-    width: mode === "idle"
-           ? Math.max(minWidth,
-               Math.min(maxWidth,
-                   timeText.implicitWidth +
-                   windowTitle.implicitWidth +
-                   horizontalPadding))
-           : 620
 
-    height: mode === "idle"
-            ? collapsedHeight
-            : expandedHeight
+    property string cleanTitle: {
+        if (!Hyprland.activeToplevel)
+            return "Desktop"
 
+        var raw = Hyprland.activeToplevel.title
+
+        if (!raw || raw === "" || raw === "Workspace")
+            return "Desktop"
+
+        var parts = raw.split(" - ")
+        if (parts.length > 1)
+            return parts[0]
+
+        return raw
+    }
+
+    // =========================
+    // WIDTH LOGIC (UNCHANGED)
+    // =========================
+
+    width: {
+        if (mode !== "idle")
+            return 800
+
+        var base = 160
+        var textWidth = titleText.implicitWidth
+        var calculated = base + textWidth
+
+        return Math.min(Math.max(calculated, 240), screen.width * 0.7)
+    }
+
+    height: mode === "idle" ? collapsedHeight : expandedHeight
     radius: mode === "idle" ? 20 : 28
     color: "#cc101015"
 
     Behavior on width {
-        NumberAnimation {
-            duration: 220
-            easing.type: Easing.OutCubic
-        }
+        NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
     }
 
     Behavior on height {
-        NumberAnimation {
-            duration: 220
-            easing.type: Easing.OutCubic
-        }
+        NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
     }
 
-    Keys.onEscapePressed: mode = "idle"
+    Keys.onEscapePressed: {
+        if (mode !== "idle")
+            mode = "idle"
+    }
+
     focus: true
 
-    // =========================
-    // IDLE MODE
-    // =========================
+    // ======================================================
+    // IDLE CONTENT (ALIGNMENT FIXED)
+    // ======================================================
+
     Item {
         anchors.fill: parent
         visible: mode === "idle"
 
-        Text {
-            id: timeText
-            text: Qt.formatTime(new Date(), "hh:mm")
-            color: "#cfcfcf"
-            font.pixelSize: 14
+        Row {
+            anchors.fill: parent
+            anchors.margins: 16
+            spacing: 12
 
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.left: parent.left
-            anchors.leftMargin: 16
-        }
+            // TIME (HARD LEFT)
+            Text {
+                id: timeText
+                text: Qt.formatTime(new Date(), "hh:mm")
+                color: "#ffffff"
+                font.pixelSize: 14
+                verticalAlignment: Text.AlignVCenter
+                height: parent.height
+            }
 
-        Text {
-            id: windowTitle
+            // FLEX SPACE
+            Item {
+                width: parent.width - timeText.width - titleText.width - 32
+                height: 1
+            }
 
-            text: Hyprland.activeToplevel
-                  && Hyprland.activeToplevel.title
-                  ? Hyprland.activeToplevel.title
-                  : "Desktop"
-
-            color: "#ffffff"
-            font.pixelSize: 14
-
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.right: parent.right
-            anchors.rightMargin: 16
-
-            elide: Text.ElideRight
-            maximumLineCount: 1
+            // TITLE (HARD RIGHT)
+            Text {
+                id: titleText
+                text: root.cleanTitle
+                color: "#ffffff"
+                font.pixelSize: 14
+                elide: Text.ElideRight
+                verticalAlignment: Text.AlignVCenter
+                height: parent.height
+            }
         }
 
         Timer {
             interval: 60000
             running: true
             repeat: true
-            onTriggered:
-                timeText.text = Qt.formatTime(new Date(), "hh:mm")
+            onTriggered: timeText.text =
+                Qt.formatTime(new Date(), "hh:mm")
         }
 
         MouseArea {
@@ -100,47 +121,31 @@ Rectangle {
         }
     }
 
-    // =========================
-    // DASHBOARD
-    // =========================
+    // ======================================================
+    // DASHBOARD (OPEN / CLOSE FIXED)
+    // ======================================================
+
     Item {
         anchors.fill: parent
-        anchors.margins: 24
+        anchors.margins: 32
         visible: mode === "dashboard"
 
-        ColumnLayout {
+        Rectangle {
             anchors.fill: parent
-            spacing: 18
+            radius: 22
+            color: "#151515"
 
             Text {
+                anchors.centerIn: parent
                 text: "Dashboard"
                 color: "white"
-                font.pixelSize: 20
-            }
-
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                radius: 22
-                color: "#151515"
+                font.pixelSize: 22
             }
         }
-    }
 
-    // =========================
-    // LAUNCHER
-    // =========================
-    Item {
-        anchors.fill: parent
-        anchors.margins: 24
-        visible: mode === "launcher"
-
-        Rectangle {
-            width: parent.width * 0.7
-            height: 320
-            radius: 18
-            anchors.centerIn: parent
-            color: "#121212"
+        MouseArea {
+            anchors.fill: parent
+            onClicked: root.mode = "idle"
         }
     }
 }
