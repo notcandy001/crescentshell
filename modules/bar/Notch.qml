@@ -3,34 +3,55 @@ import QtQuick.Layouts
 import Quickshell.Hyprland
 
 Rectangle {
-
     id: root
 
-    property string mode: "idle"   // idle, dashboard, launcher
+    property string mode: "idle"
 
     property int collapsedHeight: 40
     property int expandedHeight: 460
 
-    width: mode === "idle" ? 420 : 620
-    height: mode === "idle" ? collapsedHeight : expandedHeight
+    property int minWidth: 360
+    property int maxWidth: 720
+    property int horizontalPadding: 40
+
+    // =========================
+    // DYNAMIC WIDTH
+    // =========================
+    width: mode === "idle"
+           ? Math.max(minWidth,
+               Math.min(maxWidth,
+                   timeText.implicitWidth +
+                   windowTitle.implicitWidth +
+                   horizontalPadding))
+           : 620
+
+    height: mode === "idle"
+            ? collapsedHeight
+            : expandedHeight
 
     radius: mode === "idle" ? 20 : 28
     color: "#cc101015"
 
     Behavior on width {
-        NumberAnimation { duration: 220; easing.type: Easing.OutCubic }
+        NumberAnimation {
+            duration: 220
+            easing.type: Easing.OutCubic
+        }
     }
 
     Behavior on height {
-        NumberAnimation { duration: 220; easing.type: Easing.OutCubic }
+        NumberAnimation {
+            duration: 220
+            easing.type: Easing.OutCubic
+        }
     }
 
     Keys.onEscapePressed: mode = "idle"
     focus: true
 
-    // ===================================================
-    // IDLE MODE (FIXED CENTER ALIGNMENT)
-    // ===================================================
+    // =========================
+    // IDLE MODE
+    // =========================
     Item {
         anchors.fill: parent
         visible: mode === "idle"
@@ -48,6 +69,7 @@ Rectangle {
 
         Text {
             id: windowTitle
+
             text: Hyprland.activeToplevel
                   && Hyprland.activeToplevel.title
                   ? Hyprland.activeToplevel.title
@@ -55,19 +77,21 @@ Rectangle {
 
             color: "#ffffff"
             font.pixelSize: 14
-            elide: Text.ElideRight
 
-            anchors.centerIn: parent
-            width: parent.width * 0.6
-            horizontalAlignment: Text.AlignHCenter
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.right: parent.right
+            anchors.rightMargin: 16
+
+            elide: Text.ElideRight
+            maximumLineCount: 1
         }
 
         Timer {
             interval: 60000
             running: true
             repeat: true
-            onTriggered: timeText.text =
-                Qt.formatTime(new Date(), "hh:mm")
+            onTriggered:
+                timeText.text = Qt.formatTime(new Date(), "hh:mm")
         }
 
         MouseArea {
@@ -76,9 +100,9 @@ Rectangle {
         }
     }
 
-    // ===================================================
-    // DASHBOARD MODE (FIXED)
-    // ===================================================
+    // =========================
+    // DASHBOARD
+    // =========================
     Item {
         anchors.fill: parent
         anchors.margins: 24
@@ -103,9 +127,9 @@ Rectangle {
         }
     }
 
-    // ===================================================
-    // LAUNCHER MODE
-    // ===================================================
+    // =========================
+    // LAUNCHER
+    // =========================
     Item {
         anchors.fill: parent
         anchors.margins: 24
