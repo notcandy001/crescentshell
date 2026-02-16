@@ -8,7 +8,7 @@ WlrLayershell {
 
     layer: WlrLayer.Top
     anchors.top: true
-    width: screen.width
+    implicitWidth: screen.width
 
     property int topSpacing: 4
 

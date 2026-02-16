@@ -2,6 +2,9 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 import Quickshell.Hyprland
+import Quickshell.Wayland
+import qs.services
+import qs.modules.functions
 
 Rectangle {
     id: root
@@ -16,11 +19,15 @@ Rectangle {
     // CLEAN TITLE LOGIC 
    
 
+    property Toplevel activeToplevel: HyprlandData.isWorkspaceOccupied(HyprlandData.focusedWorkspaceId)
+        ? HyprlandData.activeToplevel
+        : null
+
     property string cleanTitle: {
-        if (!Hyprland.activeToplevel)
+        if (!activeToplevel)
             return "Desktop"
 
-        var raw = Hyprland.activeToplevel.title
+        var raw = activeToplevel?.title
 
         if (!raw || raw === "" || raw === "Workspace")
             return "Desktop"
@@ -30,7 +37,7 @@ Rectangle {
             return parts[0]
 
         return raw
-    }
+        }
 
         // WIDTH LOGIC
 
