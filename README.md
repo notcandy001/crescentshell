@@ -29,7 +29,7 @@ The architecture is being actively refined and breaking changes may occur.
 
 This is not a finished shell — it is a structured build in progress.
 
----
+
 <h2>
   <sub>
     <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Camera%20with%20Flash.png" width="32" height="32" />
@@ -38,7 +38,7 @@ This is not a finished shell — it is a structured build in progress.
 </h2>
 
 <div align="center">
-  <img src="https://github.com/notcandy001/crescentshell/blob/master/modules/bar/workspaces/screenshot-1.png" width="400" />
+  <img src="https://github.com/notcandy001/crescentshell/blob/master/modules/bar/workspaces/screenshot-1.png" width="700" />
 </div>
 
 
