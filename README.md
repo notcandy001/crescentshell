@@ -27,7 +27,7 @@ CrescentShell is currently under active development.
 
 The architecture is being actively refined and breaking changes may occur.
 
-This is not a finished shell — it is a structured build in progress.
+This is not a finished shell  it is a structured build in progress.
 
 
 <h2>
