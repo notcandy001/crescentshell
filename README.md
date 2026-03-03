@@ -12,6 +12,11 @@
 <img src="https://img.shields.io/github/license/notcandy001/crescentshell?style=for-the-badge&color=A6E3A1&labelColor=1E1E2E" />
 <img src="https://img.shields.io/badge/status-in%20development-6E7B8B?style=for-the-badge&labelColor=1E1E2E" />
 
+<a href="https://github.com/notcandy001/Moonveil">
+  <img src="https://img.shields.io/badge/dots-Moonveil-8D748C?style=for-the-badge&logo=github&logoColor=D9E0EE&labelColor=252733" />
+</a>
+
+
 </p>
 
 ---
