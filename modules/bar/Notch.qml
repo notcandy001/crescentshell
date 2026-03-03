@@ -15,10 +15,6 @@ Rectangle {
 
     signal closeRequested()
 
-   
-    // CLEAN TITLE LOGIC 
-   
-
     property Toplevel activeToplevel: HyprlandData.isWorkspaceOccupied(HyprlandData.focusedWorkspaceId)
         ? HyprlandData.activeToplevel
         : null
@@ -26,64 +22,56 @@ Rectangle {
     property string cleanTitle: {
         if (!activeToplevel)
             return "Desktop"
-
         var raw = activeToplevel?.title
-
         if (!raw || raw === "" || raw === "Workspace")
             return "Desktop"
-
         var parts = raw.split(" - ")
         if (parts.length > 1)
             return parts[0]
-
         return raw
-        }
-
-        // WIDTH LOGIC
+    }
 
     width: {
         if (mode !== "idle")
             return 800
-
         var base = 160
         var textWidth = titleText.implicitWidth
         var calculated = base + textWidth
-
         return Math.min(Math.max(calculated, 240), screen.width * 0.7)
     }
 
     height: mode === "idle" ? collapsedHeight : expandedHeight
     radius: mode === "idle" ? 20 : 28
     color: "#cc101015"
+    clip: true
 
     Behavior on width {
-        NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
+        NumberAnimation { duration: 260; easing.type: Easing.OutCubic }
     }
-
     Behavior on height {
-        NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
+        NumberAnimation { duration: 260; easing.type: Easing.OutCubic }
+    }
+    Behavior on radius {
+        NumberAnimation { duration: 260; easing.type: Easing.OutCubic }
     }
 
-    Keys.onEscapePressed: {
-        if (mode !== "idle")
-            mode = "idle"
-    }
-
+    Keys.onEscapePressed: { if (mode !== "idle") mode = "idle" }
     focus: true
 
-
-    // IDLE CONTENT (Fixed)
-
+    // IDLE CONTENT
     Item {
         anchors.fill: parent
-        visible: mode === "idle"
+        opacity: mode === "idle" ? 1 : 0
+        visible: opacity > 0
+        Behavior on opacity {
+            NumberAnimation { duration: 80; easing.type: Easing.OutQuad }
+        }
 
         Row {
             anchors.fill: parent
             anchors.margins: 16
             spacing: 12
 
-            // TIME (HARD LEFT)
             Text {
                 id: timeText
                 text: Qt.formatTime(new Date(), "hh:mm")
@@ -93,13 +81,11 @@ Rectangle {
                 height: parent.height
             }
 
-            // FLEX SPACE
             Item {
                 width: parent.width - timeText.width - titleText.width - 32
                 height: 1
             }
 
-            // TITLE (HARD RIGHT)
             Text {
                 id: titleText
                 text: root.cleanTitle
@@ -115,8 +101,7 @@ Rectangle {
             interval: 60000
             running: true
             repeat: true
-            onTriggered: timeText.text =
-                Qt.formatTime(new Date(), "hh:mm")
+            onTriggered: timeText.text = Qt.formatTime(new Date(), "hh:mm")
         }
 
         MouseArea {
@@ -125,20 +110,25 @@ Rectangle {
         }
     }
 
-    // ======================================================
-    // DASHBOARD (OPEN / CLOSE FIXED)
-    // ======================================================
-
+    // EXPANDED CONTENT
     Item {
         anchors.fill: parent
         anchors.margins: 32
-        visible: mode === "dashboard"
+        opacity: mode === "dashboard" ? 1 : 0
+        scale: mode === "dashboard" ? 1 : 0.94
+        visible: opacity > 0
+        transformOrigin: Item.Top
+        Behavior on opacity {
+            NumberAnimation { duration: 160; easing.type: Easing.OutQuad }
+        }
+        Behavior on scale {
+            NumberAnimation { duration: 220; easing.type: Easing.OutCubic }
+        }
 
         Rectangle {
             anchors.fill: parent
             radius: 22
             color: "#151515"
-
             Text {
                 anchors.centerIn: parent
                 text: "Dashboard"

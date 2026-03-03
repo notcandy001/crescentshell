@@ -7,15 +7,11 @@ import Quickshell.Io
 import Quickshell.Hyprland
 import Quickshell.Wayland
 
-// from https://github.com/xZepyx/nucleus-shell
-
 Singleton {
     id: root
 
-    // true if Hyprland is running, false otherwise
-    readonly property bool isHyprland: true // you toggle the service parsing with this val
+    readonly property bool isHyprland: true
 
-    // reactive Hyprland data, only valid if Hyprland is running
     signal stateChanged()
     readonly property var toplevels: isHyprland ? Hyprland.toplevels : []
     readonly property var workspaces: isHyprland ? Hyprland.workspaces : []
@@ -28,7 +24,6 @@ Singleton {
     property real screenH: focusedMonitor ? focusedMonitor.height : 0
     property real screenScale: focusedMonitor ? focusedMonitor.scale : 1
 
-    // parsed hyprctl data, defaults are empty
     property var windowList: []
     property var windowByAddress: ({})
     property var addresses: []
@@ -40,19 +35,64 @@ Singleton {
     property var activeWorkspaceInfo: null
     property string keyboardLayout: "?"
 
-    // dispatch a command to Hyprland, no-op if not running
-    function dispatch(request: string): void {
+    // workspace -> window count map
+    readonly property var workspaceWindowMap: {
+        const map = {}
+        const list = windowList
+        for (let i = 0; i < list.length; ++i) {
+            const wsId = list[i].workspace.id
+            if (!map[wsId])
+                map[wsId] = 0
+            map[wsId]++
+        }
+        return map
+    }
+
+    // Ambxst-style: workspace occupation map (bool per wsId)
+    property var workspaceOccupationMap: ({})
+
+    // Ambxst-style: workspace windows map (array of windows per wsId)
+    property var workspaceWindowsMap: ({})
+
+    // Debounce timer to batch rapid Hyprland events
+    Timer {
+        id: updateDebounce
+        interval: 100
+        onTriggered: {
+            root.updateAll()
+        }
+    }
+
+    function updateWindowList() {
+        updateDebounce.restart()
+    }
+
+    function updateMaps() {
+        let occupationMap = {}
+        let windowsMap = {}
+        for (var i = 0; i < root.windowList.length; ++i) {
+            var win = root.windowList[i]
+            let wsId = win.workspace.id
+            occupationMap[wsId] = true
+            if (!windowsMap[wsId]) {
+                windowsMap[wsId] = []
+            }
+            windowsMap[wsId].push(win)
+        }
+        root.workspaceOccupationMap = occupationMap
+        root.workspaceWindowsMap = windowsMap
+    }
+
+    function dispatch(request) {
         if (!isHyprland) return
         Hyprland.dispatch(request)
     }
 
-    // switch workspace safely
     function changeWorkspace(targetWorkspaceId) {
         if (!isHyprland || !targetWorkspaceId) return
         root.dispatch("workspace " + targetWorkspaceId)
     }
 
-    // find most recently focused window in a workspace
     function focusedWindowForWorkspace(workspaceId) {
         if (!isHyprland) return null
         const wsWindows = root.windowList.filter(w => w.workspace.id === workspaceId)
@@ -64,13 +104,11 @@ Singleton {
         }, null)
     }
 
-    // check if a workspace has any windows
-    function isWorkspaceOccupied(id: int): bool {
+    function isWorkspaceOccupied(id) {
         if (!isHyprland) return false
-        return Hyprland.workspaces.values.find(w => w?.id === id)?.lastIpcObject.windows > 0 || false
+        return workspaceWindowMap[id] > 0
     }
 
-    // update all hyprctl processes
     function updateAll() {
         if (!isHyprland) return
         getClients.running = true
@@ -80,7 +118,6 @@ Singleton {
         getActiveWorkspace.running = true
     }
 
-    // largest window in a workspace
     function biggestWindowForWorkspace(workspaceId) {
         if (!isHyprland) return null
         const windowsInThisWorkspace = root.windowList.filter(w => w.workspace.id === workspaceId)
@@ -91,13 +128,11 @@ Singleton {
         }, null)
     }
 
-    // refresh keyboard layout
     function refreshKeyboardLayout() {
         if (!isHyprland) return
         hyprctlDevices.running = true
     }
 
-    // only create hyprctl processes if Hyprland is running
     Component.onCompleted: {
         if (isHyprland) {
             updateAll()
@@ -105,7 +140,6 @@ Singleton {
         }
     }
 
-    // process to get keyboard layout
     Process {
         id: hyprctlDevices
         running: false
@@ -117,7 +151,6 @@ Singleton {
                     const keyboard = devices.keyboards.find(k => k.main) || devices.keyboards[0]
                     root.keyboardLayout = keyboard?.active_keymap?.toUpperCase()?.slice(0, 2) ?? "?"
                 } catch (err) {
-                    console.error("Failed to parse keyboard layout:", err)
                     root.keyboardLayout = "?"
                 }
             }
@@ -133,12 +166,12 @@ Singleton {
                 try {
                     root.windowList = JSON.parse(this.text)
                     let tempWinByAddress = {}
-                    for (let win of root.windowList) tempWinByAddress[win.address] = win
+                    for (let win of root.windowList)
+                        tempWinByAddress[win.address] = win
                     root.windowByAddress = tempWinByAddress
                     root.addresses = root.windowList.map(w => w.address)
-                } catch (e) {
-                    console.error("Failed to parse clients:", e)
-                }
+                    root.updateMaps()
+                } catch (e) {}
             }
         }
     }
@@ -150,7 +183,7 @@ Singleton {
         stdout: StdioCollector {
             onStreamFinished: {
                 try { root.monitorsInfo = JSON.parse(this.text) }
-                catch (e) { console.error("Failed to parse monitors:", e) }
+                catch (e) {}
             }
         }
     }
@@ -162,7 +195,7 @@ Singleton {
         stdout: StdioCollector {
             onStreamFinished: {
                 try { root.layers = JSON.parse(this.text) }
-                catch (e) { console.error("Failed to parse layers:", e) }
+                catch (e) {}
             }
         }
     }
@@ -176,10 +209,11 @@ Singleton {
                 try {
                     root.workspacesInfo = JSON.parse(this.text)
                     let map = {}
-                    for (let ws of root.workspacesInfo) map[ws.id] = ws
+                    for (let ws of root.workspacesInfo)
+                        map[ws.id] = ws
                     root.workspaceById = map
                     root.workspaceIds = root.workspacesInfo.map(ws => ws.id)
-                } catch (e) { console.error("Failed to parse workspaces:", e) }
+                } catch (e) {}
             }
         }
     }
@@ -191,12 +225,11 @@ Singleton {
         stdout: StdioCollector {
             onStreamFinished: {
                 try { root.activeWorkspaceInfo = JSON.parse(this.text) }
-                catch (e) { console.error("Failed to parse active workspace:", e) }
+                catch (e) {}
             }
         }
     }
 
-    // only connect to Hyprland events if running
     Connections {
         target: isHyprland ? Hyprland : null
         function onRawEvent(event) {
@@ -211,7 +244,7 @@ Singleton {
             else
                 Hyprland.refreshToplevels()
 
-            updateAll()
+            updateWindowList()
             root.stateChanged()
         }
     }

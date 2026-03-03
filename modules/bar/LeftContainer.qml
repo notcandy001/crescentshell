@@ -1,11 +1,14 @@
 import QtQuick
+import "./workspaces"
 
 Row {
 
     signal launcherRequested()
 
     spacing: 12
+    required property var monitor
 
+    // Launcher button (unchanged)
     Rectangle {
         width: 28
         height: 28
@@ -18,6 +21,7 @@ Row {
         }
     }
 
+    // Second pile (unchanged placeholder)
     Rectangle {
         width: 24
         height: 24
@@ -25,10 +29,8 @@ Row {
         color: "#33ffffff"
     }
 
-    Rectangle {
-        width: 24
-        height: 24
-        radius: 12
-        color: "#33ffffff"
-    }
+    // Third pile → Workspaces module
+   Workspaces {
+    monitor: root.monitor
+  }
 }

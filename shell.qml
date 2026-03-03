@@ -1,8 +1,14 @@
 import QtQuick
 import Quickshell
-import "modules/bar"
+import Quickshell.Hyprland
+import "./modules/bar"
 
 ShellRoot {
-    Bar { }
-}
+ 
+  Instantiator {
+        model: Quickshell.screens
 
+        delegate: Bar {
+            monitor: modelData        }
+    }
+}
