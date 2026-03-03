@@ -40,6 +40,8 @@ This is not a finished shell — it is a structured build in progress.
 <div align="center">
   <img src="https://github.com/notcandy001/crescentshell/blob/master/modules/bar/workspaces/screenshot-1.png" width="100" />
 </div>
+---
+
 ## 🧠 Overview
 
 CrescentShell is a notch driven Wayland bar built with:
