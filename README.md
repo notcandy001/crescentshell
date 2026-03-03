@@ -38,7 +38,7 @@ This is not a finished shell — it is a structured build in progress.
 </h2>
 
 <div align="center">
-  <img src="https://github.com/notcandy001/crescentshell/blob/master/modules/bar/workspaces/screenshot-1.png" width="700" />
+  <img src="https://github.com/notcandy001/crescentshell/blob/master/modules/bar/workspaces/screenshot-1.png" width="1000" />
 </div>
 
 
