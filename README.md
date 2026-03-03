@@ -28,13 +28,13 @@ This is not a finished shell — it is a structured build in progress.
 
 ## 🧠 Overview
 
-CrescentShell is a monitor-aware, notch-driven Wayland bar built with:
+CrescentShell is a notch driven Wayland bar built with:
 
 - **Hyprland**
 - **Quickshell**
 - **Qt 6**
 
-The goal is to create a clean, modular, production-focused shell component with my dotfiles 
+The goal is to create a clean, modular, focused shell component with my dotfiles 
 
 ## 🛠 Requirements
 
@@ -42,5 +42,3 @@ The goal is to create a clean, modular, production-focused shell component with 
 - Quickshell (git recommended)  
 - Qt 6  
 - Wayland session  
-
----
