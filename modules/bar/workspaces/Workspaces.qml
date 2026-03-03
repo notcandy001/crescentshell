@@ -195,14 +195,16 @@ Item {
                 width: workspacesWidget.buttonSize
                 height: workspacesWidget.buttonSize
 
-                Text {
+                Rectangle {
                     anchors.centerIn: parent
-                    text: wsButton.wsId
-                    font.pixelSize: 11
+                    width:  wsButton.isActive ? 9 : (wsButton.isOccupied ? 6 : 5)
+                    height: width
+                    radius: width / 2
                     opacity: wsButton.focusedWindow ? 0 : 1
                     color: wsButton.isActive ? "#1e1e1e" : (wsButton.isOccupied ? "#dddddd" : "#555555")
                     Behavior on opacity { NumberAnimation { duration: workspacesWidget.animDuration } }
-                    Behavior on color { ColorAnimation { duration: workspacesWidget.animDuration } }
+                    Behavior on color   { ColorAnimation  { duration: workspacesWidget.animDuration } }
+                    Behavior on width   { NumberAnimation { duration: workspacesWidget.animDuration; easing.type: Easing.OutCubic } }
                 }
 
                 IconImage {

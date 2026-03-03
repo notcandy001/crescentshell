@@ -10,13 +10,17 @@ WlrLayershell {
     property int topSpacing: 4
     property var monitor
     screen: monitor
-    // Bar window tracks the notch live animated height
-    implicitHeight: notch.height + topSpacing
+
+    // Fixed at expanded height always — never resize the compositor surface
+    // exclusiveZone stays collapsed so windows are not pushed down
+    implicitHeight: notch.expandedHeight + topSpacing
     margins.top: topSpacing
     exclusiveZone: notch.collapsedHeight + topSpacing
     color: "transparent"
+
     Item {
         anchors.fill: parent
+
         MouseArea {
             anchors.fill: parent
             visible: notch.mode !== "idle"
@@ -24,6 +28,7 @@ WlrLayershell {
             z: 1
             onClicked: notch.mode = "idle"
         }
+
         LeftContainer {
             id: leftPills
             monitor: bar.monitor
@@ -31,11 +36,13 @@ WlrLayershell {
             z: 2
             onLauncherRequested: { notch.mode = "launcher" }
         }
+
         RightContainer {
             id: rightPills
             anchors { right: parent.right; top: parent.top; rightMargin: 14; topMargin: 10 }
             z: 2
         }
+
         Notch {
             id: notch
             anchors.horizontalCenter: parent.horizontalCenter
