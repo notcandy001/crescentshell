@@ -13,7 +13,7 @@ WlrLayershell {
 
     // Fixed at expanded height always — never resize the compositor surface
     // exclusiveZone stays collapsed so windows are not pushed down
-    implicitHeight: notch.expandedHeight + topSpacing
+    implicitHeight: notch.mode === "idle" ? notch.collapsedHeight + topSpacing : notch.expandedHeight + topSpacing
     margins.top: topSpacing
     exclusiveZone: notch.collapsedHeight + topSpacing
     color: "transparent"
