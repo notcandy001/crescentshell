@@ -1,0 +1,2 @@
+module qs.modules.functions
+singleton StringUtils 1.0 StringUtils.qml

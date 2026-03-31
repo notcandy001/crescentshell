@@ -35,37 +35,27 @@ Singleton {
     property var activeWorkspaceInfo: null
     property string keyboardLayout: "?"
 
-    // workspace -> window count map
     readonly property var workspaceWindowMap: {
         const map = {}
         const list = windowList
         for (let i = 0; i < list.length; ++i) {
             const wsId = list[i].workspace.id
-            if (!map[wsId])
-                map[wsId] = 0
+            if (!map[wsId]) map[wsId] = 0
             map[wsId]++
         }
         return map
     }
 
-    // Ambxst-style: workspace occupation map (bool per wsId)
     property var workspaceOccupationMap: ({})
-
-    // Ambxst-style: workspace windows map (array of windows per wsId)
     property var workspaceWindowsMap: ({})
 
-    // Debounce timer to batch rapid Hyprland events
     Timer {
         id: updateDebounce
         interval: 100
-        onTriggered: {
-            root.updateAll()
-        }
+        onTriggered: root.updateAll()
     }
 
-    function updateWindowList() {
-        updateDebounce.restart()
-    }
+    function updateWindowList() { updateDebounce.restart() }
 
     function updateMaps() {
         let occupationMap = {}
@@ -74,9 +64,7 @@ Singleton {
             var win = root.windowList[i]
             let wsId = win.workspace.id
             occupationMap[wsId] = true
-            if (!windowsMap[wsId]) {
-                windowsMap[wsId] = []
-            }
+            if (!windowsMap[wsId]) windowsMap[wsId] = []
             windowsMap[wsId].push(win)
         }
         root.workspaceOccupationMap = occupationMap
@@ -150,9 +138,7 @@ Singleton {
                     const devices = JSON.parse(this.text)
                     const keyboard = devices.keyboards.find(k => k.main) || devices.keyboards[0]
                     root.keyboardLayout = keyboard?.active_keymap?.toUpperCase()?.slice(0, 2) ?? "?"
-                } catch (err) {
-                    root.keyboardLayout = "?"
-                }
+                } catch (err) { root.keyboardLayout = "?" }
             }
         }
     }
@@ -209,8 +195,7 @@ Singleton {
                 try {
                     root.workspacesInfo = JSON.parse(this.text)
                     let map = {}
-                    for (let ws of root.workspacesInfo)
-                        map[ws.id] = ws
+                    for (let ws of root.workspacesInfo) map[ws.id] = ws
                     root.workspaceById = map
                     root.workspaceIds = root.workspacesInfo.map(ws => ws.id)
                 } catch (e) {}
@@ -234,7 +219,6 @@ Singleton {
         target: isHyprland ? Hyprland : null
         function onRawEvent(event) {
             if (!isHyprland || event.name.endsWith("v2")) return
-
             if (event.name.includes("activelayout"))
                 refreshKeyboardLayout()
             else if (event.name.includes("mon"))
@@ -243,7 +227,6 @@ Singleton {
                 Hyprland.refreshWorkspaces()
             else
                 Hyprland.refreshToplevels()
-
             updateWindowList()
             root.stateChanged()
         }

@@ -1,54 +1,57 @@
 import QtQuick
 import Quickshell
-import Quickshell.Wayland._WlrLayerShell
+import Quickshell.Wayland
+import qs.modules.globals
+import qs.config
 
-WlrLayershell {
-    id: bar
-    layer: WlrLayer.Top
-    anchors.top: true
-    implicitWidth: screen.width
-    property int topSpacing: 4
-    property var monitor
-    screen: monitor
+PanelWindow {
+    id: panel
 
-    // Fixed at expanded height always — never resize the compositor surface
-    // exclusiveZone stays collapsed so windows are not pushed down
-    implicitHeight: notch.mode === "idle" ? notch.collapsedHeight + topSpacing : notch.expandedHeight + topSpacing
-    margins.top: topSpacing
-    exclusiveZone: notch.collapsedHeight + topSpacing
+    property alias barPosition: barContent.barPosition
+    property alias orientation: barContent.orientation
+    property alias pinned: barContent.pinned
+    property alias hoverActive: barContent.hoverActive
+    readonly property alias isMouseOverBar: barContent.isMouseOverBar
+    readonly property alias reveal: barContent.reveal
+
+    anchors {
+        top: barPosition !== "bottom"
+        bottom: barPosition !== "top"
+        left: barPosition !== "right"
+        right: barPosition !== "left"
+    }
+
     color: "transparent"
 
-    Item {
+    WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
+    WlrLayershell.layer: WlrLayer.Overlay
+
+    // Space reservation is handled by ReservationWindows.qml to avoid initialization races
+    // and provide unified control over exclusive zones.
+    exclusiveZone: 0
+    exclusionMode: ExclusionMode.Ignore
+
+    // Altura implicita incluye espacio extra para animaciones / futuros elementos.
+
+    implicitHeight: orientation === "horizontal" ? 200 : Screen.height
+
+    mask: Region {
+        item: barContent.barHitbox
+    }
+
+    Component.onCompleted: {
+        Visibilities.registerBar(screen.name, barContent);
+        Visibilities.registerBarPanel(screen.name, panel);
+    }
+
+    Component.onDestruction: {
+        Visibilities.unregisterBar(screen.name);
+        Visibilities.unregisterBarPanel(screen.name);
+    }
+
+    BarContent {
+        id: barContent
         anchors.fill: parent
-
-        MouseArea {
-            anchors.fill: parent
-            visible: notch.mode !== "idle"
-            enabled: notch.mode !== "idle"
-            z: 1
-            onClicked: notch.mode = "idle"
-        }
-
-        LeftContainer {
-            id: leftPills
-            monitor: bar.monitor
-            anchors { left: parent.left; top: parent.top; leftMargin: 14; topMargin: 10 }
-            z: 2
-            onLauncherRequested: { notch.mode = "launcher" }
-        }
-
-        RightContainer {
-            id: rightPills
-            anchors { right: parent.right; top: parent.top; rightMargin: 14; topMargin: 10 }
-            z: 2
-        }
-
-        Notch {
-            id: notch
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            anchors.topMargin: 6
-            z: 3
-        }
+        screen: panel.screen
     }
 }
