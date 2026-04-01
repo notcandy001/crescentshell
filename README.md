@@ -10,7 +10,7 @@
 <img src="https://img.shields.io/github/last-commit/notcandy001/crescentshell?style=for-the-badge&color=8D748C&labelColor=1E1E2E" />
 <img src="https://img.shields.io/github/repo-size/notcandy001/crescentshell?style=for-the-badge&color=CBA6F7&labelColor=1E1E2E" />
 <img src="https://img.shields.io/github/license/notcandy001/crescentshell?style=for-the-badge&color=A6E3A1&labelColor=1E1E2E" />
-<img src="https://img.shields.io/badge/status-in%20development-6E7B8B?style=for-the-badge&labelColor=1E1E2E" />
+<img src="https://img.shields.io/badge/Maintenance-in%20Active-6E7B8B?style=for-the-badge&labelColor=1E1E2E" />
 
 <a href="https://github.com/notcandy001/Moonveil">
   <img src="https://img.shields.io/badge/dots-Moonveil-8D748C?style=for-the-badge&logo=github&logoColor=D9E0EE&labelColor=252733" />
@@ -64,7 +64,6 @@ The goal is to create a clean, modular, focused shell component with my dotfiles
 - [outfoxxed](https://outfoxxed.me/) for creating Quickshell and the great documentation!
 - [end-4](https://github.com/end-4) for his awesome work. *(And yes, I yoinked a lot of code and GUI from it for the Quickshell side. 😅)*
 - [Rexcrazy804](https://github.com/Rexcrazy804) for the barcode lockscreen idea.
-- [xZepyx](https://github.com/xZepyx) Thank you for helping me and guideing me when i started quickshell 
-- **Nisa** for being the kind of friend who actually listens to all my delusional ideas, helped me fix things, add features, and taught me how stuff works. This whole thing wouldn’t exist without those late night conversations. Thanks :D
-- And you guys, for trying out Moonveil!
-- 
+- [xZepyx](https://github.com/xZepyx) Thank you for helping me and guideing me when i started quickshell :)
+- **Nisa** for being the kind of friend who actually listens to all my delusional ideas, helped me fix things, add features, and taught me how stuff works. This whole thing wouldn’t exist without those late night conversations. Thanks :)
+ 
