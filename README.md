@@ -58,3 +58,13 @@ The goal is to create a clean, modular, focused shell component with my dotfiles
 - Quickshell (git recommended)  
 - Qt 6  
 - Wayland session  
+
+## Credits
+
+- [outfoxxed](https://outfoxxed.me/) for creating Quickshell and the great documentation!
+- [end-4](https://github.com/end-4) for his awesome work. *(And yes, I yoinked a lot of code and GUI from it for the Quickshell side. 😅)*
+- [Rexcrazy804](https://github.com/Rexcrazy804) for the barcode lockscreen idea.
+- [xZepyx](https://github.com/xZepyx) Thank you for helping me and guideing me when i started quickshell 
+- **Nisa** for being the kind of friend who actually listens to all my delusional ideas, helped me fix things, add features, and taught me how stuff works. This whole thing wouldn’t exist without those late night conversations. Thanks :D
+- And you guys, for trying out Moonveil!
+- 
