@@ -10,7 +10,7 @@
 <img src="https://img.shields.io/github/last-commit/notcandy001/crescentshell?style=for-the-badge&color=8D748C&labelColor=1E1E2E" />
 <img src="https://img.shields.io/github/repo-size/notcandy001/crescentshell?style=for-the-badge&color=CBA6F7&labelColor=1E1E2E" />
 <img src="https://img.shields.io/github/license/notcandy001/crescentshell?style=for-the-badge&color=A6E3A1&labelColor=1E1E2E" />
-<img src="https://img.shields.io/badge/Maintenance-%20Active-6E7B8B?style=for-the-badge&labelColor=1E1E2E" />
+<img src="https://img.shields.io/badge/Maintenance-%20paused-6E7B8B?style=for-the-badge&labelColor=1E1E2E" />
 
 <a href="https://github.com/notcandy001/Moonveil">
   <img src="https://img.shields.io/badge/dots-Moonveil-8D748C?style=for-the-badge&logo=github&logoColor=D9E0EE&labelColor=252733" />
