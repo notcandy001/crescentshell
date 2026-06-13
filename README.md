@@ -1,3 +1,8 @@
+> [!Note]
+> this project has been deprecated in favor of [moon](https://github.com/notcandy001/Moonveil) & [a-shell](https://github.com/notcandy001/a-shell) so guess what i will u see there 
+
+
+
 <p align="center">
   <h2 align="center"> CrescentShell</h2>
   <p align="center">
